@@ -1,0 +1,72 @@
+/** CALENDAR STARTS HERE **/
+
+#calendar {
+    color: #FFFFFF;
+    font: 14px sans-serif;
+    background-color: #6A0C0B;
+    border: 1px solid #6A0C0B;
+    border-collapse: separate;
+    border-spacing: 5px;
+    border-radius: 5px;
+    min-width: 50px;
+}
+
+#monthrow th {
+    color: #FBCA03 !important;
+    background-color: #AA0505 !important;
+    font: 30px sans-serif !important;
+    border-radius: 5px;
+    text-align: center;
+    padding: 14px 20px 14px;
+    font-size: 16px;
+    font-weight: normal;
+    width:300px;
+}
+
+#prev, #next {
+    color: #FBCA03;
+    font-size: 16px;
+    padding: 10px 10px;
+    background: none;
+    font-weight: bold;
+    border: none;
+}
+
+#prev {
+    float: left;
+}
+
+#next {
+    float: right;
+}
+
+#next:disabled,
+#prev:disabled {
+    color: #AA0505 !important;
+}
+
+#next:hover:enabled,
+#prev:hover:enabled {
+    color: #FBCA03 !important;
+}
+
+
+#calendar td {
+    text-align: center;
+    padding: 6px 5px;
+}
+
+
+.daysoftheweek th {
+    text-align: center;
+    padding-top: 6px 15px;
+}
+
+.current-date {
+    border-radius: 5%;
+    color: #F9F9F9 !important;
+    background-color: #F9BA32;
+}
+
+
+/** CALENDAR ENDS HERE **/

@@ -38,32 +38,6 @@ let monthNames = [
     "December"
 ];
 
-let calendarEvents = {
-    // Events for February.
-    'February': {
-        6: {
-            '12:30': 'Give the Spidey suit an upgrade.',
-            '17:30': 'Shawarma Time!',
-        },
-        14: {
-            '21:30': 'Date with Pepper.',
-            '22:30': 'Time to leave for the date.',
-        },
-        17: {
-            '10:15': 'Go fight some baddies.',
-            '10:30': 'Peter\'s debate',
-            '12:30': 'Rework Friday\'s internals.',
-            '19:30': 'Secret meeting with bestie Cap.',
-        },
-        24: {
-            '12:30': 'Meet the Strange man.',
-            '14:30': 'Lunch with the Avengers',
-            '19:30': 'Cancel the Fury appointment',
-        },
-    },
-}
-
-
 
 /**
  * This function resets any previously stored data and reinitializes the
@@ -76,7 +50,6 @@ var calendarSetup = function (month) {
 
     // Explain short circuiting.
     let currentDate = new Date();
-    let year = 2018;
     month == null && (month = currentDate.getMonth());
 
     // Remove all existing rows.
@@ -89,12 +62,10 @@ var calendarSetup = function (month) {
         case 0:
             // No month before January.
             $('#prev').attr('disabled', true);
-            $('#next').attr('disabled', false);
             break;
 
         case 11:
             // No month after December.
-            $('#prev').attr('disabled', false);
             $('#next').attr('disabled', true);
             break;
 
@@ -105,9 +76,8 @@ var calendarSetup = function (month) {
 
     }
 
-    let monthData = calendarEvents[monthNames[month]];
-    let firstDayOfMonth  = new Date(year, month, 1).getDay();
-    let totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+    let firstDayOfMonth  = new Date(2018, month, 1).getDay();
+    let totalDaysInMonth = new Date(2018, month + 1, 0).getDate();
 
 
     // Create the first week.
@@ -127,24 +97,14 @@ var calendarSetup = function (month) {
 
         // Create a new <td> for the current date.
         calendarDate = $('<td></td>')
-        
-        // If the current date has an event.
-        if (monthData && i in calendarEvents[monthNames[month]]) {
-            eventButton = $('<button></button>');
-            eventButton.attr('id', 'day' + i);
-            eventButton.addClass('event-btn');
-            eventButton.click(displayInfo);
-            eventButton.text(i);
-            calendarDate.append(eventButton);
-        } else {
-            calendarDate.text(i);
-        }
-
+        calendarDate.attr('id', 'day' + i);
+        calendarDate.text(i);
         calendarWeek.append(calendarDate);
 
         dayCount++;
+
+        // If the week is over, add the row to calendar and reset the week.
         if (dayCount == 7) {
-            // If the week is over, add the row to calendar and reset the week.
             $('#calendar').append(calendarWeek);
             calendarWeek = $('<tr></tr>');
             calendarWeek.addClass('week');
@@ -164,7 +124,7 @@ var calendarSetup = function (month) {
     $('#calendar').append(calendarWeek);
 
     // If the calendar shows the current month, display date.
-    if (currentDate.getMonth == month) {
+    if (currentDate.getMonth() == month) {
         // Changing the class for current date.
         $('#day' + currentDate.getDate()).addClass('current-date');
     }
@@ -188,47 +148,6 @@ var prevMonth = function () {
 var nextMonth = function () {
     let month = $('#month').text();
     calendarSetup(monthNames.indexOf(month)+1);
-}
-
-
-/* Function to display event information. */
-var displayInfo = function (event) {
-    let currentDate = event.target.id.slice(3);     // IDs are like day1, day2
-    let mname = $('#month').text();
-    let month = monthNames.indexOf(mname);
-
-    $('#month').text(mname + ' ' + currentDate);
-    $('.daysoftheweek').hide();                         // Hide days of week.
-    $('.week').each(function () { $(this).remove(); })  // Hide week rows.
-
-    eventRow = $('<tr class="event-info"><td></td></tr>');
-    eventInfo = $('<ul></ul>');
-    eventRow.append(eventInfo);
-    
-    let dateData = calendarEvents[mname][currentDate];
-    for (let time in dateData) {
-        eventItem = $('<li></li>');
-        eventItem.append('<span class="time">' + time + '</span>' +
-            '<span class="details">' + dateData[time] + '</span>');
-        eventInfo.append(eventItem);
-    }
-    eventRow.append(eventInfo);
-    $('#calendar').append(eventRow);
-
-    $('#next').attr('disabled', true);
-    $('#prev').attr('disabled', false);
-
-    $('#prev').off('click');
-    $('#prev').click(displayCal);
-
-}
-
-var displayCal = function () {
-    $('.event-info').each(function () { console.log($(this).text()); $(this).remove(); });
-    $('.daysoftheweek').show();
-    let monthDate = $('#month').text();
-    let month = monthDate.substr(0, monthDate.indexOf(' '))
-    calendarSetup(monthNames.indexOf(month));
 }
 
 
