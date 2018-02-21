@@ -193,25 +193,27 @@ var nextMonth = function () {
 
 /* Function to display event information. */
 var displayInfo = function (event) {
-    let currentData = event.target.id.slice(3);     // IDs are like day1, day2
+    let currentDate = event.target.id.slice(3);     // IDs are like day1, day2
     let mname = $('#month').text();
     let month = monthNames.indexOf(mname);
 
-    $('#month').text(mname + ' ' + currentData);
+    $('#month').text(mname + ' ' + currentDate);
     $('.daysoftheweek').hide();                         // Hide days of week.
     $('.week').each(function () { $(this).remove(); })  // Hide week rows.
 
-    eventInfo = $('<tr><td colspan=7><ul></ul></td></tr>')
-    eventInfo.addClass('event-info');
-
-    let monthData = calendarEvents[mname];
-    for (let time in monthData) {
+    eventRow = $('<tr class="event-info"><td></td></tr>');
+    eventInfo = $('<ul></ul>');
+    eventRow.append(eventInfo);
+    
+    let dateData = calendarEvents[mname][currentDate];
+    for (let time in dateData) {
         eventItem = $('<li></li>');
-        eventItem.html('<span class="time">' + time + '</span>' +
-            '<span class="speaker">' + monthData[event] + '</span>');
+        eventItem.append('<span class="time">' + time + '</span>' +
+            '<span class="details">' + dateData[time] + '</span>');
         eventInfo.append(eventItem);
     }
-    $('.calendar').append(eventInfo);
+    eventRow.append(eventInfo);
+    $('#calendar').append(eventRow);
 
     $('#next').attr('disabled', true);
     $('#prev').attr('disabled', false);
@@ -222,7 +224,7 @@ var displayInfo = function (event) {
 }
 
 var displayCal = function () {
-    $('.event-info').each(function () { $(this).remove(); });
+    $('.event-info').each(function () { console.log($(this).text()); $(this).remove(); });
     $('.daysoftheweek').show();
     let monthDate = $('#month').text();
     let month = monthDate.substr(0, monthDate.indexOf(' '))
