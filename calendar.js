@@ -72,12 +72,12 @@ let calendarEvents = {
  * 
  */
 
-var calendarSetup = function (month, year) {
+var calendarSetup = function (month) {
 
     // Explain short circuiting.
     let currentDate = new Date();
-    month == null && (month = new Date().getMonth());
-    year  == null && (year  = new Date().getFullYear());
+    let year = 2018;
+    month == null && (month = currentDate.getMonth());
 
     // Remove all existing rows.
     $('.week').each(function () { $(this).remove(); })
@@ -94,19 +94,18 @@ var calendarSetup = function (month, year) {
 
         case 11:
             // No month after December.
-            $('#monthname').text('April');
             $('#prev').attr('disabled', false);
             $('#next').attr('disabled', true);
             break;
 
         default:
-            $('#monthname').text('March');
             $('#prev').attr('disabled', false);
             $('#next').attr('disabled', false);
             break;
 
     }
 
+    let monthData = calendarEvents[monthNames[month]];
     let firstDayOfMonth  = new Date(year, month, 1).getDay();
     let totalDaysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -130,10 +129,11 @@ var calendarSetup = function (month, year) {
         calendarDate = $('<td></td>')
         
         // If the current date has an event.
-        if (i in calendarEvents[monthNames[month]]) {
+        if (monthData && i in calendarEvents[monthNames[month]]) {
             eventButton = $('<button></button>');
             eventButton.attr('id', 'day' + i);
             eventButton.addClass('event-btn');
+            eventButton.click(displayInfo);
             eventButton.text(i);
             calendarDate.append(eventButton);
         } else {
@@ -174,84 +174,60 @@ var calendarSetup = function (month, year) {
 }
 
 
-/* Functions used to switch calendars. */
+/**
+ *  Function to move to the previous month.
+ */
 var prevMonth = function () {
-    var month = $('#month').text();
+    let month = $('#month').text();
+    calendarSetup(monthNames.indexOf(month)-1);
+}
+
+/**
+ *  Function to move to the next month.
+ */
+var nextMonth = function () {
+    let month = $('#month').text();
+    calendarSetup(monthNames.indexOf(month)+1);
+}
+
+
+/* Function to display event information. */
+var displayInfo = function (event) {
+    let currentData = event.target.id.slice(3);     // IDs are like day1, day2
+    let mname = $('#month').text();
+    let month = monthNames.indexOf(mname);
+
+    $('#month').text(mname + ' ' + currentData);
+    $('.daysoftheweek').hide();                         // Hide days of week.
+    $('.week').each(function () { $(this).remove(); })  // Hide week rows.
+
+    eventInfo = $('<tr><td colspan=7><ul></ul></td></tr>')
+    eventInfo.addClass('event-info');
+
+    let monthData = calendarEvents[mname];
+    for (let time in monthData) {
+        eventItem = $('<li></li>');
+        eventItem.html('<span class="time">' + time + '</span>' +
+            '<span class="speaker">' + monthData[event] + '</span>');
+        eventInfo.append(eventItem);
+    }
+    $('.calendar').append(eventInfo);
+
+    $('#next').attr('disabled', true);
+    $('#prev').attr('disabled', false);
+
+    $('#prev').off('click');
+    $('#prev').click(displayCal);
+
+}
+
+var displayCal = function () {
+    $('.event-info').each(function () { $(this).remove(); });
+    $('.daysoftheweek').show();
+    let monthDate = $('#month').text();
+    let month = monthDate.substr(0, monthDate.indexOf(' '))
     calendarSetup(monthNames.indexOf(month));
 }
-
-var nextMonth = function () {
-    var monthname = $('#monthname').text();
-    if (monthname == 'February')
-        calendarSetup(3);
-    else if (monthname == 'March')
-        calendarSetup(4);
-}
-
-
-// /* Function to display event information. */
-// var displayInfo = function (event) {
-//     var date = event.target.id.slice(3);
-//     var monthname = $('#monthname').text();
-//     $('#monthname').text(monthname + ' ' + date);
-//     $('.daysoftheweek').hide();
-//     $('.week').each(function () {
-//         $(this).remove();
-//     })
-
-//     if (monthname == 'February')
-//         var month = 2;
-//     else if (monthname == 'March')
-//         var month = 3;
-//     else if (monthname == 'April')
-//         var month = 4;
-
-//     var spk = data[month][date].speakers;
-//     var sem = data[month][date].semester;
-//     eventinfo = '<tr class="event-info"><td colspan=7><ul>';
-//     eventinfo += '<li><span class="room">' + sem + 'A' + '</span><span class="speaker">' + spk.A + '</span></li>';
-//     eventinfo += '<li><span class="room">' + sem + 'B' + '</span><span class="speaker">' + spk.B + '</span></li>';
-//     eventinfo += '<li><span class="room">' + sem + 'C' + '</span><span class="speaker">' + spk.C + '</span></li>';
-//     eventinfo += '</ul></td></tr>';
-//     $('.calendar').append(eventinfo);
-
-//     $('#next').attr('disabled', true);
-//     $('#prev').attr('disabled', false);
-
-//     $('#prev').off('click');
-//     $('#prev').click(displayCal);
-
-
-//     // // If there is an event on the current date.
-//     // if (i in monthData) {
-//     //     let timeData = $('<td></td>').addClass('time');
-//     //     let infoData = $('<td></td>').addClass('info');
-
-//     //     // For every event on this day, add a notification.    
-//     //     for (eventTime in monthData) {
-//     //         timeData.text(eventTime);               // Time.
-//     //         infoData.text(month[i][eventTime]);     // Details.
-//     //     }
-
-//     // }
-
-
-// }
-
-// var k = 0;
-// var displayCal = function () {
-//     k++;
-//     var monthname = $('#monthname').text();
-//     if (monthname.startsWith('February'))
-//         var month = 2;
-//     if (monthname.startsWith('March'))
-//         var month = 3;
-//     if (monthname.startsWith('April'))
-//         var month = 4;
-//     $('.event-info').each(function () { $(this).remove(); });
-//     $('.daysoftheweek').show();
-//     calendarSetup(month);
-// }
 
 
 $(document).ready(function () {

@@ -3,6 +3,7 @@
 <head>
     <title>An example Calendar.</title>
     <meta charset="UTF-8"></meta>
+    <link rel="stylesheet" type="text/css" href="calendar.css"/>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="./calendar.js"></script>
 </head>
@@ -11,9 +12,9 @@
     <table id="calendar">
         <tr id="monthrow">
             <th colspan="7">
-                <button id="prev">&#10094;</button>
+                <button id="prev" onclick="prevMonth()">&#10094;</button>
                 <span id="month"></span>
-                <button id="next">&#10095;</button>
+                <button id="next" onclick="nextMonth()">&#10095;</button>
             </th>
         </tr>
         <tr class="daysoftheweek">
